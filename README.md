@@ -18,8 +18,6 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
 
     npm install --save electron-simple-publisher
 
-## Usage
-
 ## Related
  - [electron-builder](https://github.com/electron-userland/electron-builder) -
  A complete solution to package and build an Electron app
