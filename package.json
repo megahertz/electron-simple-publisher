@@ -14,8 +14,7 @@
   },
   "files": [
     "index.js",
-    "README.md",
-    "lib/*",
+    "lib/**/*.js",
     "!lib/**/*.spec.js"
   ],
   "keywords": [
