@@ -1,3 +1,4 @@
+![logo](https://raw.githubusercontent.com/megahertz/electron-simple-updater/master/logo.png)
 # electron-simple-publisher
 [![Build Status](https://travis-ci.org/megahertz/electron-simple-publisher.svg?branch=master)](https://travis-ci.org/megahertz/electron-simple-publisher)
 [![npm version](https://badge.fury.io/js/electron-simple-publisher.svg)](https://badge.fury.io/js/electron-simple-publisher)
@@ -22,29 +23,30 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
 1. Make a distributive package using electron-builder
 
 2. Set options:
-You can specify all option through command line arguments, but it's
-easier to store the config in publisher.json in the project root. Here is
-an example for publishing through SSH:
-```js
-{
-  "transport": {
-    "module": "ssh",
-    "host": "example.com",
-    "username": "user",
-    "password": "user's password",
-    "remotePath": "/www/example.com/updates",
-    "remoteUrl": "http://example.com/updates",
-    // If you've already set package.json:updater.url you can skip this option:
-    "updatesJsonUrl": "http://example.com/updates/update.json"
-  },
-  "fields": { // Additional fields which will be added to updates.json
-    "readme": "The first version"
+  You can specify all option through command line arguments, but it's
+  easier to store the config in publisher.json in the project root. Here is
+  an example for publishing through SSH:
+  ```js
+  {
+    "transport": {
+      "module": "ssh",
+      "host": "example.com",
+      "username": "user",
+      "password": "user's password",
+      "remotePath": "/www/example.com/updates",
+      "remoteUrl": "http://example.com/updates",
+      // If you've already set package.json:updater.url you can skip this option:
+      "updatesJsonUrl": "http://example.com/updates/update.json"
+    },
+    "fields": { // Additional fields which will be added to updates.json
+      "readme": "The first version"
+    }
   }
-}
-```
+  ```
 
 3. Run a publish command:
-`$ node_modules/.bin/publish` # will publish the latest build for the current platfrom
+
+`$ node_modules/.bin/publish` - will publish the latest build for the current platfrom
 
 ### Command line arguments
 
