@@ -46,7 +46,7 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
 
 3. Run a publish command:
 
-`$ node_modules/.bin/publish` - will publish the latest build for the current platfrom
+  `$ node_modules/.bin/publish` - will publish the latest build for the current platfrom
 
 ### Command line arguments
 
