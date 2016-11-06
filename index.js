@@ -17,8 +17,8 @@ if (require.main === module) {
           console.log('All releases have been successfully published');
           break;
         }
-        case 'update': {
-          console.log('All releases have been successfully updated');
+        case 'replace': {
+          console.log('All releases have been successfully replaced');
           break;
         }
         case 'list': {
