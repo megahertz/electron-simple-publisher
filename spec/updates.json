@@ -1,5 +1,7 @@
 {
   "linux-x64-prod": {
+    "update": "https://github.com/megahertz/electron-simple-publisher/releases/download/linux-x64-prod-v0.1.0/test-0.1.0-x86_64.AppImage",
+    "install": "https://github.com/megahertz/electron-simple-publisher/releases/download/linux-x64-prod-v0.1.0/test-0.1.0-x86_64.AppImage",
     "version": "0.1.0"
   }
 }
