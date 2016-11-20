@@ -3,14 +3,13 @@
 [![Build Status](https://travis-ci.org/megahertz/electron-simple-publisher.svg?branch=master)](https://travis-ci.org/megahertz/electron-simple-publisher)
 [![npm version](https://badge.fury.io/js/electron-simple-publisher.svg)](https://badge.fury.io/js/electron-simple-publisher)
 
-# This module is in active development. The final version will be ready in a few days.
 
 ## Description
 
 This module allows to easily publish updates created by
 [electron-builder](https://github.com/electron-userland/electron-builder).
 Now SSH and github releases transports are supported.
-You can add updates support to your application using
+You can enable update feature in your application using
 [electron-simple-updater](https://github.com/megahertz/electron-simple-updater)
 
 ## Installation
