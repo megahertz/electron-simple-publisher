@@ -19,9 +19,21 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
     npm install --save-dev electron-simple-publisher
     
 ## Usage
-1. Make a distributive package using electron-builder
+1. For windows build set the target value to squirrel in package.json:
+  ```
+  ...
+  "build": {
+    ...
+    "win": {
+      "target": "squirrel"
+    }
+  },
+  ...
+  ```
 
-2. Set options:
+2. Make a distributive package using electron-builder
+
+3. Set options:
   You can specify all option through command line arguments, but it's
   easier to store the config in publisher.json in the project root. Here is
   an example for publishing through SSH:
@@ -43,7 +55,7 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
   }
   ```
 
-3. Run a publish command:
+4. Run a publish command:
 
   `$ node_modules/.bin/publish` - will publish the latest build for the current platfrom
 
