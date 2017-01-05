@@ -80,7 +80,7 @@ BuildId has a following format: [platform]-[arch]-[channel]-v[version]
 Options:
   configFile        File with json ext, defaults to ./publisher.json
   -t or --transport Name of node module which implements Transport interface.
-  -p or --path      Path to the directory with distributive files.
+  -p or --path      Path to the directory with distributive files. (default dist)
   -d or --debug     Show debug information
   --field-{name}    Set {name} field of updates.json
   -h or --help      Show this message
@@ -91,6 +91,7 @@ Name                | Default                   | Description
 --------------------|---------------------------|------------
 remotePath*         |                           | Path to a folder with updates.json on a hosting
 remoteUrl*          |                           | Url for remotePath
+host                |                           | SSH server host
 username            | current user              | A username on a hosting
 password            | null                      | If not then key authentication will be used
 usePrivateKey       | true if no password       | Key authentication
