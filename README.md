@@ -8,7 +8,7 @@
 
 This module allows to easily publish updates created by
 [electron-builder](https://github.com/electron-userland/electron-builder).
-Now SSH and github releases transports are supported.
+Now SSH, github and local release transports are supported.
 You can enable update feature in your application using
 [electron-simple-updater](https://github.com/megahertz/electron-simple-updater)
 
@@ -107,6 +107,13 @@ Name                | Default                     | Description
 token*              |                             | Github API token, [you can create it here](https://github.com/settings/tokens/new)
 repository          | package.json:repository.url | Path to a folder with updates.json on a hosting
 updatesJsonPath     | '' (repository root)        | Path to updates.json from the repository root
+
+### Local Options (just save a release to local directory for manual upload)
+Name                | Default      | Description
+--------------------|--------------|------------
+remoteUrl*          |              | The release will be published at this url later
+outPath             | dist/publish | Save build at this location
+
 
 ## Related
  - [electron-builder](https://github.com/electron-userland/electron-builder) -
