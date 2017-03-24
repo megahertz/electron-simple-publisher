@@ -1,6 +1,6 @@
 {
   "name": "electron-simple-publisher",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Simple way to publish releases for electron-simple-updater",
   "main": "index.js",
   "scripts": {
