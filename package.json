@@ -58,6 +58,7 @@
   "dependencies": {
     "httpreq": "^0.4.22",
     "minimist": "^1.2.0",
-    "node-ssh": "^3.0.1"
+    "node-ssh": "^4.2.0",
+    "single-line-log": "^1.1.2"
   }
 }
