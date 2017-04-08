@@ -34,7 +34,7 @@ documentation for all transport options.
 ## Options
 Name                | Default                   | Description
 --------------------|---------------------------|------------
-remotePath*         |                           | Path to a folder with updates.json on a hosting
+remotePath*         |                           | Absolute path to a parent dir of updates.json on a hosting
 remoteUrl*          |                           | Url for remotePath
 host                |                           | SSH server host
 username            | current user              | A username on a hosting
