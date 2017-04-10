@@ -35,8 +35,8 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
 
 3. Set options:
   You can specify all option through command line arguments, but it's
-  easier to store the config in publisher.json in the project root. Here
-  is an example for publishing through SSH:
+  easier to store the config in publisher.js or publisher.json in the
+  project root. Here is an example for publishing through SSH:
   ```js
   {
     "transport": {
@@ -79,7 +79,7 @@ BuildId has a following format: [platform]-[arch]-[channel]-v[version]
     version:  package.json:version
 
 Options:
-  configFile         File with json ext, defaults to ./publisher.json
+  configFile         File with json ext, defaults to ./publisher.js
   -t or --transport  Name of node module which implements Transport interface.
   --transport-{name} Specify the {name} transport option
   -p or --path       Path to distributive files (default dist).
