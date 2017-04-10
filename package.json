@@ -1,6 +1,6 @@
 {
   "name": "electron-simple-publisher",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Simple way to publish releases for electron-simple-updater",
   "main": "index.js",
   "scripts": {
@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.38.0",
+    "ftp": "^0.3.10",
     "httpreq": "^0.4.22",
     "minimist": "^1.2.0",
     "node-ssh": "^4.2.0",
