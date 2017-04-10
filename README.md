@@ -8,7 +8,7 @@
 
 This module makes easy to publish updates created by
 [electron-builder](https://github.com/electron-userland/electron-builder).
-Now SSH, github, ssh and local release transports are supported.
+Now SSH, github, ftp, Amazon S3 and local release transports are supported.
 You can enable update feature in your application using
 [electron-simple-updater](https://github.com/megahertz/electron-simple-updater)
 
@@ -101,6 +101,12 @@ documentation for all transport options.
 Upload updates to github releases. You can use this transport even if
 you don't want to share your source code. For this purposes you just
 need to create a public repository which will store your releases.
+
+#### [FTP](docs/ftp.md)
+
+Upload releases using FTP protocol. This transport uses
+[node-ftp](https://github.com/mscdex/node-ftp) internally so you can
+check its documentation for all transport options.
 
 #### [Amazon S3](docs/s3.md)
 

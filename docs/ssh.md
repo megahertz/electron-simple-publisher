@@ -36,7 +36,7 @@ Name                | Default                   | Description
 --------------------|---------------------------|------------
 remotePath*         |                           | Absolute path to a parent dir of updates.json on a hosting
 remoteUrl*          |                           | Url for remotePath
-host                |                           | SSH server host
+host*               |                           | SSH server host
 username            | current user              | A username on a hosting
 password            | null                      | If not then key authentication will be used
 privateKeyPath      | ~/.ssh/id_rsa             | Read a privateKey from this file
