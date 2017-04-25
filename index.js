@@ -2,8 +2,8 @@
 
 'use strict';
 
-const getOptionsFromCli = require('./lib/utils/get-options-from-cli');
-const publisher         = require('./lib/publisher');
+const getOptionsFromCli = require('./out/utils/get-options-from-cli');
+const publisher         = require('./out/publisher');
 
 const cliOptions = getOptionsFromCli(process.argv.slice(2));
 

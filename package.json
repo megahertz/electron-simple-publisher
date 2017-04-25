@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run lint && npm run mocha",
+    "build": "./scripts/build.sh",
     "mocha": "./node_modules/.bin/mocha ./spec/*.js ./lib/**/*.spec.js",
     "lint": "node_modules/.bin/eslint ./index.js ./lib/**/*.js ./spec/**/*.js"
   },
@@ -56,7 +57,11 @@
     "mock-require": "^1.3.0",
     "rewire": "*",
     "sinon": "^1.17.6",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "babel-cli": "^6.16.0",
+    "babel-core": "^6.17.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.18.0"
   },
   "dependencies": {
     "aws-sdk": "^2.38.0",
