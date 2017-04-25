@@ -1,5 +1,5 @@
 {
-  "name": "electron-simple-publisher",
+  "name": "@newsioaps/electron-simple-publisher",
   "version": "0.4.4",
   "description": "Simple way to publish releases for electron-simple-updater",
   "main": "index.js",
@@ -8,10 +8,6 @@
     "build": "./scripts/build.sh",
     "mocha": "./node_modules/.bin/mocha ./spec/*.js ./lib/**/*.spec.js",
     "lint": "node_modules/.bin/eslint ./index.js ./lib/**/*.js ./spec/**/*.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/megahertz/electron-simple-publisher.git"
   },
   "files": [
     "index.js",
@@ -36,15 +32,9 @@
   ],
   "author": "Alexey Prokhorov",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/megahertz/electron-simple-publisher/issues"
-  },
   "homepage": "https://github.com/megahertz/electron-simple-publisher#readme",
   "bin": {
     "publish": "./index.js"
-  },
-  "engines": {
-    "node": ">=6.0"
   },
   "devDependencies": {
     "chai": "*",
