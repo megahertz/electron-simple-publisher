@@ -11,8 +11,8 @@
   },
   "files": [
     "index.js",
-    "lib/**/*.js",
-    "!lib/**/*.spec.js"
+    "out/**/*.js",
+    "!out/**/*.spec.js"
   ],
   "keywords": [
     "electron",
