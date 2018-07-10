@@ -17,7 +17,7 @@ You can enable update feature in your application using
 Install with [npm](https://npmjs.org/package/electron-simple-publisher):
 
     npm install --save-dev electron-simple-publisher
-    
+
 ## Usage
 1. For windows build set the target value to squirrel in package.json:
   ```
@@ -66,7 +66,7 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
 Usage: publish [command] [options] [arguments]
 
 Commands (default is publish):
-  publish [configFile] [buildId buildId2 ...] Publish a new build(s).
+  publish [configFile] [buildId buildId2 ... | all] Publish a new build(s).
   replace [configFile] [buildId]              Replace the current build.
   remove  [configFile] [buildId buildId2 ...] Remove one or more builds.
   list    [configFile]                        Show builds on a hosting.
@@ -122,7 +122,7 @@ to a server manually.
  A complete solution to package and build an Electron app
  - [electron-simple-updater](https://github.com/megahertz/electron-simple-updater) -
  Simple way to enable update for the electron application
-    
+
 ## License
 
 Licensed under MIT.
