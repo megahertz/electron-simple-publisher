@@ -66,10 +66,10 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
 Usage: publish [command] [options] [arguments]
 
 Commands (default is publish):
-  publish [configFile] [buildId buildId2 ... | all] Publish a new build(s).
-  replace [configFile] [buildId]              Replace the current build.
-  remove  [configFile] [buildId buildId2 ...] Remove one or more builds.
-  list    [configFile]                        Show builds on a hosting.
+  publish [configFile] [buildId1 Id2 …|all] Publish a new build(s).
+  replace [configFile] [buildId]            Replace the current build.
+  remove  [configFile] [buildId1 Id2 …]     Remove one or more builds.
+  list    [configFile]                      Show builds on a hosting.
 
 BuildId has a following format: [platform]-[arch]-[channel]-v[version]
   You can specify only a part of buildId, like linux-x64, defaults:
