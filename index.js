@@ -25,8 +25,13 @@ if (require.main === module) {
         }
 
         case 'list': {
-          console.error('Builds on the hosting:');
-          console.log(result.join(' '));
+          if (result.length > 0) {
+            console.error('Releases on the hosting:');
+            console.log(result.join(' '));
+          } else {
+            console.error('There are no releases on the hosting.');
+          }
+
           break;
         }
 
@@ -36,8 +41,13 @@ if (require.main === module) {
         }
 
         case 'clean': {
-          console.error('Removed releases:');
-          console.log(result.join(' '));
+          if (result.length > 0) {
+            console.error('Removed releases:');
+            console.log(result.join(' '));
+          } else {
+            console.error('There are no releases to clean.');
+          }
+
           break;
         }
       }
