@@ -19,6 +19,7 @@
     "key-spacing": [2, { "beforeColon": false, "afterColon": true, "mode": "minimum" }],
     "import/no-extraneous-dependencies":  0,
     "max-len": [2, { "code": 80 }],
+    "no-await-in-loop": 0,
     "no-confusing-arrow": 0,
     "no-console": 0,
     "no-continue": 0,

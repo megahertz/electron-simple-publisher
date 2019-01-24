@@ -2,50 +2,42 @@
 
 'use strict';
 
-/* eslint-disable no-multi-spaces,default-case */
-
+const commands          = require('./lib/commands');
 const getOptionsFromCli = require('./lib/utils/get-options-from-cli');
-const publisher         = require('./lib/publisher');
+const normalizeOptions  = require('./lib/utils/normalize-options');
 
-const cliOptions = getOptionsFromCli(process.argv.slice(2));
-
-module.exports = publisher;
-
+module.exports = run;
 if (require.main === module) {
-  publisher.run(cliOptions)
-    .then((result) => {
-      switch (cliOptions.command) {
-        case 'publish': return showResult(result, 'published');
-        case 'replace': return showResult(result, 'replaced');
-        case 'remove':  return showResult(result, 'removed');
-        case 'clean':   return showResult(result, 'cleaned');
+  main();
+}
 
-        case 'list': {
-          if (result.length > 0) {
-            console.error('Releases on the hosting:');
-            console.log(result.join('\n'));
-          } else {
-            console.error('There are no releases on the hosting.');
-          }
-        }
-      }
-    })
+function main() {
+  const cliOptions = getOptionsFromCli(process.argv.slice(2));
+  run(cliOptions)
     .catch((e) => {
-      if (cliOptions.debug) {
-        console.error(e);
-      } else {
-        console.error(e.message);
-      }
-
+      console.error(cliOptions.debug ? e : e.message);
       process.exit(1);
     });
 }
 
-function showResult(list, verb) {
-  if (list && list.length > 0) {
-    console.error(`Successfully ${verb}:`);
-    console.log(list.join('\n'));
-  } else {
-    console.error(`Nothing was ${verb}.`);
+async function run(options) {
+  let transport;
+
+  try {
+    options = normalizeOptions(options);
+    transport = options.transport.instance;
+    transport.init();
+  } catch (e) {
+    return Promise.reject(e);
   }
+
+  const Command = commands[options.command];
+  if (!Command) {
+    throw new Error(`Unknown command ${options.command}`);
+  }
+
+  /** @type AbstractCommand */
+  const command = new Command(options);
+  await command.run();
+  await transport.close();
 }
