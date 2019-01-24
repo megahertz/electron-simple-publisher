@@ -4,7 +4,6 @@ const path = require('path');
 const AbstractTransport = require('../lib/transport/abstract');
 
 class TestTransport extends AbstractTransport {
-
   constructor(options) {
     super(options);
     this.uploadFiles = [];
@@ -23,8 +22,8 @@ class TestTransport extends AbstractTransport {
   uploadFile(filePath, build) {
     return new Promise((resolve) => {
       this.uploadFiles.push(filePath);
-      const url = 'http://example.com/' + this.getBuildId(build) + '/' +
-        path.basename(filePath);
+      const url = 'http://example.com/' + this.getBuildId(build) + '/'
+        + path.basename(filePath);
       resolve(url);
     });
   }
@@ -37,14 +36,17 @@ class TestTransport extends AbstractTransport {
   fetchUpdatesJson() {
     return new Promise((resolve) => {
       this.updateFetches++;
+
+      const url = 'http://example.com/win32-x64-prod-v0.0.1';
+
       resolve({
         'win32-x64-prod': {
-          'installUrl': 'http://example.com/win32-x64-prod-v0.0.1/Example-0.0.1.exe',
-          'updateUrl': 'http://example.com/win32-x64-prod-v0.0.1/Example-0.0.1.nullpkg',
+          'installUrl': `${url}/Example-0.0.1.exe`,
+          'updateUrl': `${url}/Example-0.0.1.nullpkg`,
           'platform': 'win32',
           'version': '0.0.1',
-          'readme': 'Version 0.0.1'
-        }
+          'readme': 'Version 0.0.1',
+        },
       });
     });
   }
@@ -83,7 +85,7 @@ class TestTransport extends AbstractTransport {
       this.listFetches++;
       resolve([
         'win32-x64-prod-v0.0.2',
-        'linux-x64-prod-v0.0.2'
+        'linux-x64-prod-v0.0.2',
       ]);
     });
   }

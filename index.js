@@ -12,6 +12,7 @@ module.exports = publisher;
 if (require.main === module) {
   publisher.run(cliOptions)
     .then((result) => {
+      // eslint-disable-next-line default-case
       switch (cliOptions.command) {
         case 'publish': {
           console.log('All releases have been successfully published');
@@ -32,7 +33,7 @@ if (require.main === module) {
         }
       }
     })
-    .catch(e => {
+    .catch((e) => {
       if (cliOptions.debug) {
         console.error(e);
       } else {
