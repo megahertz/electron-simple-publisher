@@ -79,13 +79,14 @@ BuildId has a following format: [platform]-[arch]-[channel]-v[version]
     version:  package.json:version
 
 Options:
-  configFile         File with json ext, defaults to ./publisher.js
-  -t or --transport  Name of node module which implements Transport interface.
-  --transport-{name} Specify the {name} transport option
-  -p or --path       Path to distributive files (default dist).
-  -d or --debug      Show debug information
-  --field-{name}     Set updates.json:{buildId}.{name} field
-  -h or --help       Show this message
+  configFile          File with json ext, defaults to ./publisher.js
+  -t or --transport   Name of node module which implements Transport interface.
+  --transport-{name}  Specify the {name} transport option
+  -p or --path        Path to distributive files (default dist).
+  -d or --debug       Show debug information
+  -n or --noprogress  Don't show upload progress
+  --field-{name}      Set updates.json:{buildId}.{name} field 
+  -h or --help        Show this message
 ```
 
 ### Transports
