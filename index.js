@@ -15,20 +15,29 @@ if (require.main === module) {
       // eslint-disable-next-line default-case
       switch (cliOptions.command) {
         case 'publish': {
-          console.log('All releases have been successfully published');
+          console.log('All releases have been successfully published.');
           break;
         }
+
         case 'replace': {
-          console.log('All releases have been successfully replaced');
+          console.log('The release replaced.');
           break;
         }
+
         case 'list': {
-          console.log('Builds on the hosting:');
+          console.error('Builds on the hosting:');
           console.log(result.join(' '));
           break;
         }
+
         case 'remove': {
-          console.log('All specified releases have been successfully removed');
+          console.log('All specified releases removed');
+          break;
+        }
+
+        case 'clean': {
+          console.error('Removed releases:');
+          console.log(result.join(' '));
           break;
         }
       }
