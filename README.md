@@ -51,7 +51,11 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
       "readme": "The first version"
     },
     // If you've already set package.json:updater.url you can skip this option:
-    "updatesJsonUrl": "http://example.com/updates/update.json"
+    "updatesJsonUrl": "http://example.com/updates/update.json",
+    // Builds contained these substrings will be ignored when run clean command
+    "except": [
+      "prod-v0.5.0"
+    ]
   }
   ```
 
@@ -69,6 +73,8 @@ Commands (default is publish):
   publish [configFile] [buildId1 Id2 …|all] Publish a new build(s).
   replace [configFile] [buildId]            Replace the current build.
   remove  [configFile] [buildId1 Id2 …]     Remove one or more builds.
+  clean   [configFile]                      Remove builds missed in updates.json
+    -e or --except NAME1,NAME2              NAME1,NAME2 will be preserved
   list    [configFile]                      Show builds on a hosting.
 
 BuildId has a following format: [platform]-[arch]-[channel]-v[version]
