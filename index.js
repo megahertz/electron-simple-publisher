@@ -2,6 +2,8 @@
 
 'use strict';
 
+/* eslint-disable no-multi-spaces,default-case */
+
 const getOptionsFromCli = require('./lib/utils/get-options-from-cli');
 const publisher         = require('./lib/publisher');
 
@@ -12,43 +14,19 @@ module.exports = publisher;
 if (require.main === module) {
   publisher.run(cliOptions)
     .then((result) => {
-      // eslint-disable-next-line default-case
       switch (cliOptions.command) {
-        case 'publish': {
-          console.log('All releases have been successfully published.');
-          break;
-        }
-
-        case 'replace': {
-          console.log('The release replaced.');
-          break;
-        }
+        case 'publish': return showResult(result, 'published');
+        case 'replace': return showResult(result, 'replaced');
+        case 'remove':  return showResult(result, 'removed');
+        case 'clean':   return showResult(result, 'cleaned');
 
         case 'list': {
           if (result.length > 0) {
             console.error('Releases on the hosting:');
-            console.log(result.join(' '));
+            console.log(result.join('\n'));
           } else {
             console.error('There are no releases on the hosting.');
           }
-
-          break;
-        }
-
-        case 'remove': {
-          console.log('All specified releases removed');
-          break;
-        }
-
-        case 'clean': {
-          if (result.length > 0) {
-            console.error('Removed releases:');
-            console.log(result.join(' '));
-          } else {
-            console.error('There are no releases to clean.');
-          }
-
-          break;
         }
       }
     })
@@ -61,4 +39,13 @@ if (require.main === module) {
 
       process.exit(1);
     });
+}
+
+function showResult(list, verb) {
+  if (list && list.length > 0) {
+    console.error(`Successfully ${verb}:`);
+    console.log(list.join('\n'));
+  } else {
+    console.error(`Nothing was ${verb}.`);
+  }
 }
