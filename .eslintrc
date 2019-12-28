@@ -6,6 +6,7 @@
     "node": true
   },
   "rules": {
+    "arrow-parens": [2, "as-needed", { "requireForBlockBody": true }],
     "arrow-body-style": 0,
     "class-methods-use-this": 0,
     "comma-dangle": [2, {

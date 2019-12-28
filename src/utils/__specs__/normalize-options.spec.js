@@ -1,7 +1,7 @@
 'use strict';
 
-const { expect } = require('chai');
-const mod        = require('./normalize-options');
+const { describe, expect, it } = require('humile');
+const mod = require('../normalize-options');
 
 describe('Options module', () => {
   it('should apply options from package.json', () => {
@@ -14,7 +14,7 @@ describe('Options module', () => {
         build: 'win32-ia32',
       },
     };
-    expect(mod.applyPackageJson({}, packageJson)).to.deep.equal({
+    expect(mod.applyPackageJson({}, packageJson)).toEqual({
       packageJson,
       version: '1.0.1',
       updatesJsonUrl: 'http://example.com',
@@ -29,7 +29,7 @@ describe('Options module', () => {
       platform: 'linux',
       arch: 'ia32',
     };
-    expect(mod.applyPlatformDefaults({}, process)).to.deep.equal({
+    expect(mod.applyPlatformDefaults({}, process)).toEqual({
       platform: 'linux',
       arch: 'ia32',
     });
@@ -45,14 +45,14 @@ describe('Options module', () => {
 
     const betaOpt = { ...opt, version: '1.2.3-beta2' };
 
-    expect(mod.normalizeBuild('win32', opt)).to.deep.equal({
+    expect(mod.normalizeBuild('win32', opt)).toEqual({
       platform: 'win32',
       arch: 'ia32',
       version: '1.2.3',
       channel: 'prod',
     });
 
-    expect(mod.normalizeBuild('linux-x64', opt)).to.deep.equal({
+    expect(mod.normalizeBuild('linux-x64', opt)).toEqual({
       platform: 'linux',
       arch: 'x64',
       version: '1.2.3',
@@ -60,28 +60,28 @@ describe('Options module', () => {
     });
 
 
-    expect(mod.normalizeBuild('linux-x64-beta', betaOpt)).to.deep.equal({
+    expect(mod.normalizeBuild('linux-x64-beta', betaOpt)).toEqual({
       platform: 'linux',
       arch: 'x64',
       version: '1.2.3-beta2',
       channel: 'beta',
     });
 
-    expect(mod.normalizeBuild('linux-x64-beta-v0.0.2', opt)).to.deep.equal({
+    expect(mod.normalizeBuild('linux-x64-beta-v0.0.2', opt)).toEqual({
       platform: 'linux',
       arch: 'x64',
       version: '0.0.2',
       channel: 'beta',
     });
 
-    expect(mod.normalizeBuild('linux-x64-beta-v0.0.2-beta2', opt)).deep.equal({
+    expect(mod.normalizeBuild('linux-x64-beta-v0.0.2-beta2', opt)).toEqual({
       platform: 'linux',
       arch: 'x64',
       version: '0.0.2-beta2',
       channel: 'beta',
     });
 
-    expect(mod.normalizeBuild('linux-ia32-dev-v1.0.0-1', opt)).deep.equal({
+    expect(mod.normalizeBuild('linux-ia32-dev-v1.0.0-1', opt)).toEqual({
       platform: 'linux',
       arch: 'ia32',
       version: '1.0.0-1',
@@ -107,7 +107,7 @@ describe('Options module', () => {
         },
       ],
     };
-    expect(mod.validateIfRemoveCommand.bind(null, opt1)).to.not.throw(Error);
+    expect(mod.validateIfRemoveCommand.bind(null, opt1)).not.toThrow(Error);
 
     const opt2 = {
       command: 'remove',
@@ -125,7 +125,7 @@ describe('Options module', () => {
         },
       ],
     };
-    expect(mod.validateIfRemoveCommand.bind(null, opt2)).to.throw(Error);
+    expect(mod.validateIfRemoveCommand.bind(null, opt2)).toThrow();
   });
 
   it('should apply options from applyConfigJson', () => {
@@ -138,7 +138,7 @@ describe('Options module', () => {
       ],
     };
 
-    expect(mod.applyConfigJson({}, packageJson)).to.deep.equal({
+    expect(mod.applyConfigJson({}, packageJson)).toEqual({
       transport: {
         module: 'github',
       },

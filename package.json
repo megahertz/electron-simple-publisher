@@ -2,17 +2,19 @@
   "name": "electron-simple-publisher",
   "version": "0.6.3",
   "description": "Simple way to publish releases for electron-simple-updater",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "npm run lint && npm run mocha",
-    "mocha": "./node_modules/.bin/mocha './spec/*.js' './lib/**/*.spec.js'",
-    "lint": "node_modules/.bin/eslint ./index.js './lib/**/*.js' './spec/**/*.js'"
+    "test": "humile",
+    "lint": "eslint 'src/**/*.js'",
+    "test:full": "npm run test && npm run lint",
+    "postversion": "git push && git push --tags",
+    "preversion": "npm run test:full",
+    "prepack": "npm run test:full"
   },
   "repository": "megahertz/electron-simple-publisher",
   "files": [
-    "index.js",
-    "lib/**/*.js",
-    "!lib/**/*.spec.js"
+    "src/*",
+    "!__specs__"
   ],
   "keywords": [
     "electron",
@@ -35,17 +37,16 @@
   "bugs": "https://github.com/megahertz/electron-simple-publisher/issues",
   "homepage": "https://github.com/megahertz/electron-simple-publisher#readme",
   "bin": {
-    "publish": "index.js"
+    "publish": "src/index.js"
   },
   "engines": {
     "node": ">=8.0"
   },
   "devDependencies": {
-    "chai": "*",
-    "eslint": "*",
-    "eslint-config-airbnb-base": "*",
-    "eslint-plugin-import": "*",
-    "mocha": "*"
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.19.1",
+    "humile": "^0.2.16"
   },
   "dependencies": {
     "aws-sdk": "^2.38.0",

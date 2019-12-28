@@ -1,9 +1,8 @@
 'use strict';
 
-const { expect } = require('chai');
-
-const PublishCommand = require('./PublishCommand');
-const TestTransport  = require('../../spec/test-transport');
+const { describe, expect, it } = require('humile');
+const PublishCommand = require('../PublishCommand');
+const TestTransport  = require('../../__specs__/TestTransport');
 
 describe('Publish command', () => {
   it('should publish all assets', async () => {
@@ -27,14 +26,14 @@ describe('Publish command', () => {
     const cmd = new PublishCommand(options);
 
     const assetUrls = await cmd.publishAssets(options, transport);
-    expect(transport.uploadFiles).to.deep.equal([
+    expect(transport.uploadFiles).toEqual([
       '/tmp/dist/win32-ia32/test-3.3.1-full.nupkg',
       '/tmp/dist/win32-ia32/Test Setup 3.3.1-ia32.exe',
       '/tmp/dist/win32-ia32/RELEASES',
     ]);
 
     const url = 'http://example.com/win32-ia32-test-v1.0.0';
-    expect(assetUrls).to.deep.equal({
+    expect(assetUrls).toEqual({
       installer: `${url}/Test Setup 3.3.1-ia32.exe`,
       metaFile:  `${url}/RELEASES`,
       updater:   `${url}/test-3.3.1-full.nupkg`,

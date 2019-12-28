@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const AbstractTransport = require('../lib/transport/abstract');
+const AbstractTransport = require('../transport/abstract');
 
 class TestTransport extends AbstractTransport {
   constructor(options) {

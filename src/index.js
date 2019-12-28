@@ -2,9 +2,9 @@
 
 'use strict';
 
-const commands          = require('./lib/commands');
-const getOptionsFromCli = require('./lib/utils/get-options-from-cli');
-const normalizeOptions  = require('./lib/utils/normalize-options');
+const commands = require('./commands');
+const getOptionsFromCli = require('./utils/get-options-from-cli');
+const normalizeOptions = require('./utils/normalize-options');
 
 module.exports = run;
 if (require.main === module) {

@@ -1,8 +1,8 @@
 'use strict';
 
-const { expect } = require('chai');
+const { describe, expect, it } = require('humile');
 
-const SshTransport = require('./ssh');
+const SshTransport = require('../ssh');
 
 class NoExceptionSshTransport extends SshTransport {
   normalizeOptions(options) {
@@ -19,23 +19,24 @@ describe('SshTransport', () => {
   it('should not use a private key if password is specified', () => {
     const options = getTransportOptions({ password: 'pass' });
 
-    expect(options.usePrivateKey).to.be.false;
-    expect(options.privateKeyPath).to.be.undefined;
+    expect(options.usePrivateKey).toBe(false);
+    expect(options.privateKeyPath).not.toBeDefined();
   });
 
   it('should use a private key if password is not specified', () => {
     const options = getTransportOptions();
 
-    expect(options.usePrivateKey).to.be.true;
-    expect(options.privateKeyPath).not.to.be.undefined;
+    expect(options.usePrivateKey).toBe(true);
+    expect(options.privateKeyPath).toBeDefined();
   });
 });
 
 function getTransportOptions(config) {
-  const options = Object.assign({
+  const options = {
     remoteUrl: 'http://example.com',
     remotePath: '/',
-  }, config);
+    ...config,
+  };
 
   const ssh = new NoExceptionSshTransport({
     transport: options,

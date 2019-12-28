@@ -1,7 +1,7 @@
 'use strict';
 
-const { expect } = require('chai');
-const CleanCommand = require('./CleanCommand');
+const { describe, expect, it } = require('humile');
+const CleanCommand = require('../CleanCommand');
 
 describe('CleanCommand', () => {
   const cmd = new CleanCommand({});
@@ -9,11 +9,11 @@ describe('CleanCommand', () => {
   it('filterExceptions should return values not existed in preserved', () => {
     const values = ['win32-v0.0.1', 'win32-x64-stage-0.1.0', 'test0.0.1'];
 
-    expect(cmd.filterExceptions(values, ['win32'])).to.deep.equal([
+    expect(cmd.filterExceptions(values, ['win32'])).toEqual([
       'test0.0.1',
     ]);
 
-    expect(cmd.filterExceptions(values, ['0.0.1'])).to.deep.equal([
+    expect(cmd.filterExceptions(values, ['0.0.1'])).toEqual([
       'win32-x64-stage-0.1.0',
     ]);
   });
@@ -39,7 +39,7 @@ describe('CleanCommand', () => {
       },
     };
 
-    expect(cmd.extractKeysFromUpdatesJson(json)).to.deep.equal([
+    expect(cmd.extractKeysFromUpdatesJson(json)).toEqual([
       'win32-v0.0.1',
       'vista-7-prod-v0.0.1',
       'linux-x64-stage-v1.0.2',

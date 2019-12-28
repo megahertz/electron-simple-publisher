@@ -2,14 +2,14 @@
 
 /* eslint-disable padded-blocks */
 
-const { expect }        = require('chai');
-const getOptionsFromCli = require('./get-options-from-cli');
+const { describe, expect, it } = require('humile');
+const getOptionsFromCli = require('../get-options-from-cli');
 
 
 describe('CLI', () => {
   it('should use publish as default command', () => {
     const options = cmd('');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: [],
       fields: {},
@@ -19,7 +19,7 @@ describe('CLI', () => {
 
   it('should remove builds', () => {
     const options = cmd('remove -t github win32-x64-prod-v0.0.2');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'remove',
       builds: ['win32-x64-prod-v0.0.2'],
       fields: {},
@@ -29,7 +29,7 @@ describe('CLI', () => {
 
   it('should list builds', () => {
     const options = cmd('list -t github');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'list',
       builds: [],
       fields: {},
@@ -39,7 +39,7 @@ describe('CLI', () => {
 
   it('should replace a single build', () => {
     const options = cmd('replace win32-x64');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'replace',
       builds: ['win32-x64'],
       fields: {},
@@ -49,7 +49,7 @@ describe('CLI', () => {
 
   it('should publish without arguments', () => {
     const options = cmd('publish');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: [],
       fields: {},
@@ -59,7 +59,7 @@ describe('CLI', () => {
 
   it('should publish a single build', () => {
     const options = cmd('publish win32-x64');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: ['win32-x64'],
       fields: {},
@@ -69,7 +69,7 @@ describe('CLI', () => {
 
   it('should publish multiple builds', () => {
     const options = cmd('publish win32-x64 win32-ia32');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: ['win32-x64', 'win32-ia32'],
       fields: {},
@@ -79,7 +79,7 @@ describe('CLI', () => {
 
   it('should publish multiple builds with the config', () => {
     const options = cmd('publish publisher.json win32-x64 win32-ia32');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: ['win32-x64', 'win32-ia32'],
       fields: {},
@@ -92,7 +92,7 @@ describe('CLI', () => {
     const options = cmd(
       'publish -p ./dist/win --transport=github publisher.json win32-x64'
     );
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: ['win32-x64'],
       fields: {},
@@ -104,7 +104,7 @@ describe('CLI', () => {
 
   it('should publish with additional updates.json fields', () => {
     const options = cmd('publish --field-readme=FirstRelease');
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: [],
       fields: { readme: 'FirstRelease' },
@@ -117,7 +117,7 @@ describe('CLI', () => {
       'publish publisher.json -n -t github win32-x64-prod -d'
     );
 
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: ['win32-x64-prod'],
       debug: true,
@@ -133,7 +133,7 @@ describe('CLI', () => {
       'publish publisher.json -t github --transport-token=123'
     );
 
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'publish',
       builds: [],
       config: 'publisher.json',
@@ -147,7 +147,7 @@ describe('CLI', () => {
       'clean -e win32,linux-x64'
     );
 
-    expect(options).to.deep.equal({
+    expect(options).toEqual({
       command: 'clean',
       builds: [],
       fields: { },

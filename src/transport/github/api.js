@@ -73,10 +73,10 @@ class GithubApi {
   }
 
   normalizeOptions(route, reqData = {}, reqOptions = {}) {
-    const urlParams = Object.assign({}, {
+    const urlParams = {
       owner: this.owner,
       repo: this.repo,
-    });
+    };
     const options = {
       host: 'api.github.com',
       headers: {

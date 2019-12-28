@@ -56,13 +56,12 @@ function applyConfigJson(options, configJson) {
     configJson.transport = { name: configJson.transport };
   }
 
-  options.transport = Object.assign(
-    {},
-    configJson.transport,
-    options.transport
-  );
-  options.fields = Object.assign({}, configJson.fields, options.fields);
-  return Object.assign({}, configJson, options);
+  options.transport = {
+    ...configJson.transport,
+    ...options.transport,
+  };
+  options.fields = { ...configJson.fields, ...options.fields };
+  return { ...configJson, ...options };
 }
 
 function applyPackageJson(options, packageJson) {
@@ -94,7 +93,7 @@ function applyPackageJson(options, packageJson) {
     }
   }
 
-  return Object.assign({}, values, options);
+  return { ...values, ...options };
 }
 
 function applyPlatformDefaults(options, process) {
