@@ -1,9 +1,10 @@
 'use strict';
 
-const fs                  = require('fs');
-const path                = require('path');
+const fs = require('fs');
+const path = require('path');
 const { stderr: lineLog } = require('single-line-log');
-const AbstractCommand     = require('./AbstractCommand');
+const AbstractCommand = require('./AbstractCommand');
+const { calcSha256Hash } = require('../utils/file');
 
 class PublishCommand extends AbstractCommand {
   async beforeAction() {
@@ -50,6 +51,10 @@ class PublishCommand extends AbstractCommand {
 
     if (build.platform === 'win32') {
       meta.update = assets.metaFile.replace('/RELEASES', '');
+    }
+
+    if (build.platform === 'linux') {
+      meta.sha256 = await calcSha256Hash(build.assets.update);
     }
 
     this.publishedBuilds.push([build, meta]);
