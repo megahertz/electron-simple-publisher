@@ -1,13 +1,13 @@
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 const {
   BlobServiceClient,
-  StorageSharedKeyCredential
-} = require("@azure/storage-blob");
+  StorageSharedKeyCredential,
+} = require('@azure/storage-blob');
 
-const AbstractTransport = require("./abstract");
+const AbstractTransport = require('./abstract');
 
 class AzureTransport extends AbstractTransport {
   /**
@@ -15,21 +15,21 @@ class AzureTransport extends AbstractTransport {
    * @param {string} options.account REQUIRED
    * @param {string} options.accountKey REQUIRED
    * @param {string} options.containerName REQUIRED
-   * @param {string} options.blobUrl defaults to `https://${options.account}.blob.core.windows.net`
-   * @param {string} options.remoteUrl http accessible url (computed automatically if not defined)
+   * @param {string} options.blobUrl the base url
+   * @param {string} options.remoteUrl http accessible url
    * @param {string} options.remotePath "prefix" inside the azure container
    */
   normalizeOptions(options) {
     if (!options.containerName) {
-      throw new Error("Container name is required.");
+      throw new Error('Container name is required.');
     } else if (!options.account || !options.accountKey) {
-      throw new Error("Please provide your azure storage account and key.");
+      throw new Error('Please provide your azure storage account and key.');
     }
 
-    if (options.remotePath && !options.remotePath.endsWith("/")) {
-      options.remotePath += "/";
+    if (options.remotePath && !options.remotePath.endsWith('/')) {
+      options.remotePath += '/';
     } else if (!options.remotePath) {
-      options.remotePath = "";
+      options.remotePath = '';
     }
 
     if (!options.blobUrl) {
@@ -37,7 +37,8 @@ class AzureTransport extends AbstractTransport {
     }
 
     if (!options.remoteUrl) {
-      options.remoteUrl = `${options.blobUrl}/${options.containerName}/${options.remotePath}`;
+      options.remoteUrl = options.blobUrl
+        + `/${options.containerName}/${options.remotePath}`;
     }
 
     super.normalizeOptions(options);
@@ -89,10 +90,10 @@ class AzureTransport extends AbstractTransport {
    * @return {Promise<string>} Url to updates.json
    */
   async pushUpdatesJson(data) {
-    const outPath = path.join(this.options.remotePath, "updates.json");
+    const outPath = path.join(this.options.remotePath, 'updates.json');
     try {
       const blockBlobClient = this.containerClient.getBlockBlobClient(outPath);
-      const updatesJson = JSON.stringify(data, null, "  ");
+      const updatesJson = JSON.stringify(data, null, '  ');
       await blockBlobClient.upload(updatesJson, Buffer.byteLength(updatesJson));
       return;
     } catch (e) {
@@ -106,11 +107,11 @@ class AzureTransport extends AbstractTransport {
    */
   async fetchBuildsList() {
     try {
-      let builds = [];
-      for await (const blob of this.containerClient.listBlobsByHierarchy("/", {
-        prefix: this.options.remotePath
+      const builds = [];
+      for await (const blob of this.containerClient.listBlobsByHierarchy('/', {
+        prefix: this.options.remotePath,
       })) {
-        if (blob.kind !== "prefix") continue;
+        if (blob.kind !== 'prefix') continue;
         // Remove prefix and ending / from name
         const name = blob.name.slice(
           this.options.remotePath.length,
@@ -136,14 +137,14 @@ class AzureTransport extends AbstractTransport {
       const outPath = path.posix.join(this.options.remotePath, buildId);
 
       for await (const blob of this.containerClient.listBlobsFlat({
-        prefix: outPath
+        prefix: outPath,
       })) {
         try {
           const blockBlobClient = this.containerClient.getBlockBlobClient(
             blob.name
           );
           await blockBlobClient.delete({
-            deleteSnapshots: "include"
+            deleteSnapshots: 'include',
           });
         } catch (e) {
           console.warn(`Couldn't remove file ${blob.name}: ${e.message}`);
