@@ -19,6 +19,7 @@ const TRANSPORTS = {
   local:  '../transport/local',
   s3:     '../transport/s3',
   ssh:    '../transport/ssh',
+  azure:  '../transport/azure',
 };
 
 /**
