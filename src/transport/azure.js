@@ -74,8 +74,7 @@ class AzureTransport extends AbstractTransport {
     try {
       const blockBlobClient = this.containerClient.getBlockBlobClient(outPath);
       await blockBlobClient.uploadFile(filePath);
-      return path.posix.join(
-        this.options.blobUrl,
+      return `${this.options.blobUrl}/` + path.posix.join(
         this.options.containerName,
         outPath
       );
