@@ -119,6 +119,8 @@ check its documentation for all transport options.
 
 Upload releases to S3 storage.
 
+#### [Azure Blob storage](docs/azure.md)
+
 #### [Local](docs/local.md)
 
 This transport allows to create file structure which can be uploaded

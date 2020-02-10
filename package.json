@@ -23,6 +23,7 @@
     "update",
     "publish",
     "release",
+    "azure",
     "s3",
     "ssh",
     "github",
@@ -49,6 +50,7 @@
     "humile": "^0.2.16"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.0.2",
     "aws-sdk": "^2.38.0",
     "ftp": "^0.3.10",
     "httpreq": "^0.4.22",
