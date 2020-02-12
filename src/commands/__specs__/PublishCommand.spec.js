@@ -2,11 +2,13 @@
 
 const { describe, expect, it } = require('humile');
 const PublishCommand = require('../PublishCommand');
-const TestTransport  = require('../../__specs__/TestTransport');
+const { createTransport } = require('../../transport');
+const { getTestConfig } = require('../../utils/config');
+const Build = require('../../utils/Build');
 
 describe('Publish command', () => {
   it('should publish all assets', async () => {
-    const options = {
+    const build = new Build({
       platform: 'win32',
       arch: 'ia32',
       channel: 'test',
@@ -16,23 +18,27 @@ describe('Publish command', () => {
         installer: '/tmp/dist/win32-ia32/Test Setup 3.3.1-ia32.exe',
         metaFile: '/tmp/dist/win32-ia32/RELEASES',
       },
-      transport: {},
-      updatesJsonUrl: 'http://example.com',
+    });
+
+    const options = {
+      ...build,
+      transport: { module: 'test' },
+      metaFileUrl: 'http://example.com',
     };
 
-    const transport = new TestTransport(options);
-    options.transport.instance = transport;
+    const config = getTestConfig(options);
 
-    const cmd = new PublishCommand(options);
+    const transport = await createTransport(config);
+    const cmd = new PublishCommand(config, transport);
 
-    const assetUrls = await cmd.publishAssets(options, transport);
+    const assetUrls = await cmd.publishAssets(build);
     expect(transport.uploadFiles).toEqual([
       '/tmp/dist/win32-ia32/test-3.3.1-full.nupkg',
       '/tmp/dist/win32-ia32/Test Setup 3.3.1-ia32.exe',
       '/tmp/dist/win32-ia32/RELEASES',
     ]);
 
-    const url = 'http://example.com/win32-ia32-test-v1.0.0';
+    const url = 'http://example.com/win32-ia32-test-1.0.0';
     expect(assetUrls).toEqual({
       installer: `${url}/Test Setup 3.3.1-ia32.exe`,
       metaFile:  `${url}/RELEASES`,

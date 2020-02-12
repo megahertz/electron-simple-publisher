@@ -10,7 +10,7 @@ documentation for all transport options.
 {
   ...
   "updater": {
-    "url": "http://example.com/updates/updates.json"
+    "url": "http://example.com/updates/{platform}-{arch}-{channel}.json"
   },
   ...
 }
@@ -42,7 +42,7 @@ password            | null                      | If not then key authentication
 privateKeyPath      | ~/.ssh/id_rsa             | Read a privateKey from this file
 privateKey          |                           | You can specify it directly instead of using privateKeyPath
 afterUploadCommand  | false                     | If set, this SSH command will be run when upload process has been finished
-afterRemoveCommand  | false                    | If set, this SSH command will be run when remove process has been finished
+afterRemoveCommand  | false                     | If set, this SSH command will be run when remove process has been finished
 
 Other SSH options you can find in
 [ssh2 docs](https://github.com/mscdex/ssh2#client-methods)

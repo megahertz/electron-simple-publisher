@@ -3,11 +3,16 @@
 const fs   = require('fs');
 const path = require('path');
 
-const AbstractTransport = require('./abstract');
+const AbstractTransport = require('./AbstractTransport');
 
+/**
+ * @property {string} options.metaFileName
+ * @property {string} options.outPath
+ */
 class LocalTransport extends AbstractTransport {
   normalizeOptions(options) {
     super.normalizeOptions(options);
+
     if (!options.outPath) {
       options.outPath = 'dist/publish';
     }
@@ -17,31 +22,38 @@ class LocalTransport extends AbstractTransport {
    * Upload file to a hosting and get its url
    * @abstract
    * @param {string} filePath
-   * @param {object} build
+   * @param {Build} build
    * @return {Promise<string>} File url
    */
-  uploadFile(filePath, build) {
+  async uploadFile(filePath, build) {
     const outPath = this.getOutFilePath(filePath, build);
-    return copyFile(filePath, outPath)
-      .then(() => this.getFileUrl(filePath, build));
+    await copyFile(filePath, outPath);
+    return this.getFileUrl(filePath, build);
   }
 
   /**
-   * Save updates.json to a hosting
-   * @return {Promise<string>} Url to updates.json
+   * Save MetaFile to a hosting
+   * @param {object} data MetaFile content
+   * @param {Build} build
+   * @return {Promise<string>} Url to MetaFile
    */
-  pushUpdatesJson(data) {
-    const outPath = path.join(this.options.outPath, 'updates.json');
-    mkdirp(this.options.outPath);
+  async pushMetaFile(data, build) {
+    const opts = this.options;
+    const outPath = this.replaceBuildTemplates(
+      path.join(opts.outPath, opts.metaFileName),
+      build
+    );
 
+    fs.mkdirSync(opts.outPath, { recursive: true });
     fs.writeFileSync(outPath, JSON.stringify(data, null, '  '));
-    return Promise.resolve();
+
+    return this.getMetaFileUrl(build);
   }
 
   /**
    * @return {Promise<Array<string>>}
    */
-  fetchBuildsList() {
+  async fetchBuildsList() {
     let builds;
     try {
       builds = fs.readdirSync(this.options.outPath)
@@ -53,23 +65,30 @@ class LocalTransport extends AbstractTransport {
       builds = [];
     }
 
-    return Promise.resolve(builds);
+    return builds;
   }
 
   /**
    * @return {Promise}
    */
-  removeBuild(build, resolveName = true) {
-    const buildId = resolveName ? this.getBuildId(build) : build;
-    rmDir(path.join(this.options.outPath, buildId));
-    return Promise.resolve();
+  async removeResource(subDir) {
+    return fs.promises.rmdir(
+      path.join(this.options.outPath, subDir),
+      { recursive: true }
+    );
   }
 
+  /**
+   * @param {string} localFilePath
+   * @param {Build} build
+   * @return {string}
+   * @private
+   */
   getOutFilePath(localFilePath, build) {
     localFilePath = path.basename(localFilePath);
     return path.posix.join(
       this.options.outPath,
-      this.getBuildId(build),
+      build.idWithVersion,
       this.normalizeFileName(localFilePath)
     );
   }
@@ -77,39 +96,22 @@ class LocalTransport extends AbstractTransport {
 
 module.exports = LocalTransport;
 
-function mkdirp(dirPath) {
-  dirPath.split('/').forEach((dir, index, splits) => {
-    const parent = splits.slice(0, index).join('/');
-    const dp = path.resolve(parent, dir);
-    if (!fs.existsSync(dp)) {
-      fs.mkdirSync(dp);
-    }
-  });
-}
-
-function copyFile(source, target) {
-  mkdirp(path.dirname(target));
+async function copyFile(source, target) {
+  fs.mkdirSync(path.dirname(target), { recursive: true });
   return new Promise(((resolve, reject) => {
     const readStream = fs.createReadStream(source);
     readStream.on('error', rejectCleanup);
+
     const writeStream = fs.createWriteStream(target);
     writeStream.on('error', rejectCleanup);
+    writeStream.on('finish', resolve);
+
+    readStream.pipe(writeStream);
+
     function rejectCleanup(err) {
       readStream.destroy();
       writeStream.end();
       reject(err);
     }
-    writeStream.on('finish', resolve);
-    readStream.pipe(writeStream);
   }));
-}
-
-function rmDir(dirPath) {
-  if (!fs.existsSync(dirPath)) return;
-  fs.readdirSync(dirPath)
-    .map(f => path.join(dirPath, f))
-    .forEach((file) => {
-      fs.lstatSync(file).isDirectory() ? rmDir(file) : fs.unlinkSync(file);
-    });
-  fs.rmdirSync(dirPath);
 }

@@ -1,92 +1,122 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
-const Ftp  = require('./client');
+const { Transform } = require('stream');
+const AbstractTransport = require('../AbstractTransport');
+const FtpClient = require('./FtpClient');
 
-const AbstractTransport = require('./../abstract');
-
+/**
+ * @property {string} options.metaFileName
+ * @property {string} options.remoteUrl
+ * @property {string} options.remotePath
+ * @property {string} options.host
+ * @property {string} options.user
+ * @property {string} options.password
+ */
 class FtpTransport extends AbstractTransport {
-  /**
-   * @param {Object} options
-   * @param {string} options.remoteUrl
-   * @param {string} options.remotePath
-   * @param {string} options.host
-   * @param {string} options.user
-   * @param {string} options.password
-   */
   normalizeOptions(options) {
     super.normalizeOptions(options);
 
     const REQUIRED = ['remoteUrl', 'remotePath', 'host', 'user', 'password'];
     for (const field of REQUIRED) {
       if (!options[field]) {
-        throw new Error(`The transport.${field} option is not set`);
+        throw new Error(`The transport.${field} option is empty`);
       }
     }
   }
 
-  init() {
-    this.ftp = new Ftp(this.options);
-    this.q   = this.ftp.connect();
+  async init() {
+    this.ftp = new FtpClient(this.options);
+    return this.ftp.connect();
   }
 
   /**
    * Upload file to a hosting and get its url
    * @abstract
    * @param {string} filePath
-   * @param {object} build
+   * @param {Build} build
    * @return {Promise<string>} File url
    */
-  uploadFile(filePath, build) {
-    const buildId = this.getBuildId(build);
+  async uploadFile(filePath, build) {
+    const buildId = build.idWithVersion;
     const fileStream = this.makeProgressStream(filePath);
 
-    return this.q
-      .then(() => this.ftp.cwdUpdatesRoot())
-      .then(() => this.ftp.mkDirNoError(buildId))
-      .then(() => this.ftp.cwd(buildId))
-      .then(() => this.ftp.putFile(fileStream, path.basename(filePath)))
-      .then(() => this.getFileUrl(filePath, build));
+    await this.ftp.cwdUpdatesRoot();
+    await this.ftp.mkDirNoError(buildId);
+    await this.ftp.cwd(buildId);
+    await this.ftp.putFile(fileStream, path.basename(filePath));
+    return this.getFileUrl(filePath, build);
   }
 
   /**
-   * Save updates.json to a hosting
-   * @return {Promise<string>} Url to updates.json
+   * Save MetaFile to a hosting
+   * @param {object} data MetaFile content
+   * @param {Build} build
+   * @return {Promise<string>} Url to MetaFile
    */
-  pushUpdatesJson(data) {
+  async pushMetaFile(data, build) {
     const buffer = Buffer.from(JSON.stringify(data, null, '  '), 'utf8');
-    return this.q
-      .then(() => this.ftp.cwdUpdatesRoot())
-      .then(() => this.ftp.putFile(buffer, 'updates.json'))
-      .then(() => this.getUpdatesJsonUrl());
+
+    const fileName = this.replaceBuildTemplates(
+      this.options.metaFileName,
+      build
+    );
+
+    await this.ftp.cwdUpdatesRoot();
+    await this.ftp.putFile(buffer, fileName);
+    return this.getMetaFileUrl(build);
   }
 
   /**
    * @return {Promise<Array<string>>}
    */
-  fetchBuildsList() {
-    return this.q
-      .then(() => this.ftp.cwdUpdatesRoot())
-      .then(() => this.ftp.list())
-      .then((list) => {
-        return list
-          .map(item => item.name)
-          .filter(name => name.match(/^\w+-\w+-\w+-[\w.]+$/));
-      });
+  async fetchBuildsList() {
+    await this.ftp.cwdUpdatesRoot();
+    const list = await this.ftp.list();
+    return list
+      .map(item => item.name)
+      .filter(name => name.match(/^\w+-\w+-\w+-[\w.]+$/));
   }
 
   /**
+   * @param {string} resource
    * @return {Promise}
    */
-  removeBuild(build, resolveName = true) {
-    const buildId = resolveName ? this.getBuildId(build) : build;
-    return this.ftp.cwdUpdatesRoot()
-      .then(() => this.ftp.rmDir(buildId));
+  async removeResource(resource) {
+    await this.ftp.cwdUpdatesRoot();
+    return this.ftp.rmDir(resource);
   }
 
-  close() {
+  async close() {
     this.ftp.close();
     return super.close();
+  }
+
+  /**
+   * @param {string} filePath
+   * @return {module:stream.internal.Transform|ReadStream}
+   */
+  makeProgressStream(filePath) {
+    const readSteam = fs.createReadStream(filePath);
+    if (!this.config.progress) {
+      return readSteam;
+    }
+
+    const self = this;
+    const totalSize = fs.statSync(filePath).size;
+    let uploaded = 0;
+
+    const transform = new Transform();
+    // eslint-disable-next-line no-underscore-dangle
+    transform._transform = function updateProgress(chunk, enc, cb) {
+      this.push(chunk);
+      uploaded += chunk.length;
+      self.setProgress(filePath, uploaded, totalSize);
+      cb();
+    };
+
+    return readSteam.pipe(transform);
   }
 }
 

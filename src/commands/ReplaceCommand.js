@@ -6,8 +6,8 @@ const RemoveCommand   = require('./RemoveCommand');
 
 class ReplaceCommand extends AbstractCommand {
   async beforeAction() {
-    this.publisCommand = new PublishCommand(this.options);
-    this.removeCommand = new RemoveCommand(this.options);
+    this.publisCommand = new PublishCommand(this.config, this.transport);
+    this.removeCommand = new RemoveCommand(this.config, this.transport);
 
     await this.publisCommand.beforeAction();
     await this.removeCommand.beforeAction();

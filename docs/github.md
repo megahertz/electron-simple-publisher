@@ -14,7 +14,7 @@ to use this transport
 {
   ...
   "updater": {
-    "url": "https://raw.githubusercontent.com/user/example/master/updates.json"
+    "url": "https://raw.githubusercontent.com/user/example/master/updates/{platform}-{arch}-{channel}.json"
   },
   ...
 }
@@ -31,11 +31,11 @@ to use this transport
 ```
 
 ## Options
-Name                | Default                     | Description
---------------------|-----------------------------|------------
-token*              |                             | Github API token,
-repository          | package.json:repository.url | {username}/{reponame}
-updatesJsonPath     | 'updates.json'              | Path to updates.json from the repository root
+Name             | Default                                    | Description
+-----------------|--------------------------------------------|------------
+token*           |                                            | Github API token,
+repository       | package.json:repository.url                | {username}/{reponame}
+metaFilePath     | 'updates/{platform}-{arch}-{channel}.json' | Path to MetaFile from the repository root
 
 Other SSH options you can find in
 [ssh2 docs](https://github.com/mscdex/ssh2#client-methods)

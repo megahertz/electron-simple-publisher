@@ -1,17 +1,16 @@
 'use strict';
 
-const fs                = require('fs');
-const GithubApi         = require('./api');
-const AbstractTransport = require('../abstract');
+const fs = require('fs');
+const GithubApi = require('./GithubApi');
+const AbstractTransport = require('../AbstractTransport');
 
+/**
+ * @property {string} options.repository
+ * @property {string} options.token
+ * @property {string} options.metaFilePath - path to update.json
+ *   from the repository root
+ */
 class GithubTransport extends AbstractTransport {
-  /**
-   * @param {object} options
-   * @param {string} options.repository
-   * @param {string} options.token
-   * @param {string} options.updatesJsonPath - path to update.json
-   *   from the repository root
-   */
   normalizeOptions(options) {
     super.normalizeOptions(options);
 
@@ -21,21 +20,28 @@ class GithubTransport extends AbstractTransport {
       );
     }
 
+    if (!options.repository) {
+      throw new Error(
+        'You should set a transport.repository option to publish to github'
+      );
+    }
+
+    if (!options.metaFilePath) {
+      options.metaFilePath = `updates/${options.metaFileName}`;
+    }
+
+    if (options.metaFilePath.startsWith('/')) {
+      options.metaFilePath = options.metaFilePath.substring(1);
+    }
+
+
     this.initApiClient();
   }
 
   initApiClient() {
     const options = this.options;
     let repo = options.repository;
-    if (!repo) {
-      try {
-        repo = this.commandOptions.packageJson.repository.url;
-      } catch (e) {
-        throw new Error(
-          'You should set a transport.repository option to publish to github'
-        );
-      }
-    }
+
     repo = repo
       .replace(/^git\+/, '')
       .replace('https://github.com/', '')
@@ -44,108 +50,91 @@ class GithubTransport extends AbstractTransport {
     this.githubApi = new GithubApi(
       repo,
       options.token,
-      this.commandOptions.debug
+      this.config.debug
     );
   }
 
   /**
    * Upload file to a hosting and get its url
    * @param {string} filePath
-   * @param {object} build
+   * @param {Build} build
    * @return {Promise<string>} File url
    */
-  uploadFile(filePath, build) {
-    const name = this.getBuildId(build);
+  async uploadFile(filePath, build) {
     const size = fs.statSync(filePath).size;
 
     let onProgress;
-    if (!this.commandOptions.noprogress) {
+    if (this.config.progress) {
       onProgress = (transferred) => {
         this.setProgress(filePath, transferred, size);
       };
     }
 
-    return this.githubApi.releaseFile(filePath, name, onProgress);
+    return this.githubApi
+      .releaseFile(filePath, build.idWithVersion, onProgress);
   }
 
   /**
-   * Push a updates.json
-   * @return {Promise<string>} Url to updates.json
+   * Push MetaFile
+   * @param {object} data MetaFile content
+   * @param {Build} build
+   * @return {Promise<string>} Url to MetaFile
    */
-  pushUpdatesJson(data) {
-    let commitPath = this.options.updatesJsonPath || 'updates.json';
-    if (commitPath.startsWith('/')) {
-      commitPath = commitPath.substring(1);
-    }
-
+  async pushMetaFile(data, build) {
+    const commitPath = this.replaceBuildTemplates(
+      this.options.metaFilePath,
+      build
+    );
     const jsonString = JSON.stringify(data, null, '  ');
     const base64Data = Buffer.from(jsonString).toString('base64');
-    const pathParams = { _path: commitPath };
 
-    return this.api('GET /repos/:owner/:repo/contents/:path ', pathParams)
-      .then((res) => {
-        const params = {
-          ...pathParams,
-          path:    commitPath,
-          message: 'Publish a new release',
-          content: base64Data,
-        };
+    const content = await this.api('GET /repos/:owner/:repo/contents/:path', {
+      _path: commitPath,
+    });
 
-        if (res.sha) {
-          params.sha = res.sha;
-        }
+    const commit = await this.api('PUT /repos/:owner/:repo/contents/:path', {
+      _path: commitPath,
+      path:    commitPath,
+      message: 'Publish a new release',
+      content: base64Data,
+      ...(content.sha ? { sha: content.sha } : {}),
+    });
 
-        return this.api('PUT /repos/:owner/:repo/contents/:path', params);
-      })
-      .then(({ commit }) => {
-        if (commit) {
-          return this.getUpdatesJsonUrl();
-        }
+    if (!commit) {
+      throw new Error('Could not commit MetaFile');
+    }
 
-        throw new Error('Could not commit updates.json');
-      });
+    return this.getMetaFileUrl(build);
   }
 
   /**
-   * @return {Promise<Array<string>>}
+   * @return {Promise<string[]>}
    */
-  fetchBuildsList() {
-    return this.api('GET /repos/:owner/:repo/releases')
-      .then(res => res.length ? res.map(r => r.tag_name) : []);
+  async fetchBuildsList() {
+    const res = await this.api('GET /repos/:owner/:repo/releases');
+    return res.length ? res.map(r => r.tag_name) : [];
   }
 
   /**
+   * @param {string} tag
    * @return {Promise}
    */
-  removeBuild(build, resolveName = true) {
-    const tag = resolveName ? this.getBuildId(build) : build;
-
-    return this.api('GET /repos/:owner/:repo/releases/tags/:tag', { _tag: tag })
-
-      .then((res) => {
-        if (!res.id) {
-          return { code: 404 };
-        }
-
-        return this.api('DELETE /repos/:owner/:repo/releases/:id', {
-          _id: res.id,
-        });
-      })
-
-      .then((res) => {
-        if (res.code !== 204) {
-          console.warn(`Release ${tag} doesn't exist. Trying to delete a tag…`);
-        }
-        return this.api('DELETE /repos/:owner/:repo/git/refs/:ref', {
-          _ref: `tags/${tag}`,
-        });
-      })
-
-      .then((res) => {
-        if (res.code !== 204) {
-          throw new Error(`Tag ${tag} isn't removed`);
-        }
+  async removeResource(tag) {
+    const rel = await this.api('GET /repos/:owner/:repo/releases/tags/:tag', {
+      _tag: tag,
+    });
+    if (rel.id) {
+      await this.api('DELETE /repos/:owner/:repo/releases/:id', {
+        _id: rel.id,
       });
+    }
+
+    const tagResp = await this.api('DELETE /repos/:owner/:repo/git/refs/:ref', {
+      _ref: `tags/${tag}`,
+    });
+    if (tagResp.code !== 204) {
+      throw new Error(`Tag ${tag} isn't removed`);
+    }
   }
 
   /**
@@ -155,7 +144,7 @@ class GithubTransport extends AbstractTransport {
    * @return {Promise<Object>}
    * @private
    */
-  api(route, data = {}) {
+  async api(route, data = {}) {
     return this.githubApi.request(route, data);
   }
 }

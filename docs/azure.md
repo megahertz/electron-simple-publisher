@@ -2,18 +2,18 @@
 
 ## Configuration example:
 *package.json*
-```js
+```json
 {
   ...
   "updater": {
-    "url": "https://example-updates.blob.core.windows.net/update-container/updates.json"
+    "url": "https://example-updates.blob.core.windows.net/update-container/{platform}-{arch}-{channel}.json"
   },
   ...
 }
 ```
 
 *publisher.json*
-```js
+```json
 {
   "transport": {
     "module": "azure",
@@ -31,5 +31,5 @@ account       |                                           | Azure account
 accountKey    |                                           | Account API Key
 containerName |                                           | Directory where updates are stored
 blobUrl       | https://${account}.blob.core.windows.net  | Service root url
-remoteUrl     | ${blobUrl}/${containerName}/${remotePath} | Service root url + resurce path
+remoteUrl     | ${blobUrl}/${containerName}/${remotePath} | Service root url + resource path
 remotePath    | ''

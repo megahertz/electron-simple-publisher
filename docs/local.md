@@ -9,7 +9,7 @@ to a server manually.
 {
   ...
   "updater": {
-    "url": "http://example.com/updates/updates.json"
+    "url": "http://example.com/updates/{platform}-{arch}-{channel}.json"
   },
   ...
 }
@@ -27,5 +27,5 @@ to a server manually.
 ## Options
 Name                | Default      | Description
 --------------------|--------------|------------
-remoteUrl*          |              | The release will be published at this url later
-outPath             | dist/publish | Save build at this location
+remoteUrl*          |              | The release could be published at this url later
+outPath             | dist/publish | Save build at the location

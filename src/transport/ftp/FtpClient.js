@@ -2,7 +2,7 @@
 
 const Ftp = require('ftp');
 
-class Client {
+class FtpClient {
   constructor(options) {
     this.options = options;
   }
@@ -69,4 +69,4 @@ class Client {
   }
 }
 
-module.exports = Client;
+module.exports = FtpClient;

@@ -2,42 +2,30 @@
 
 'use strict';
 
-const commands = require('./commands');
-const getOptionsFromCli = require('./utils/get-options-from-cli');
-const normalizeOptions = require('./utils/normalize-options');
+const { createCommand } = require('./commands');
+const { createTransport } = require('./transport');
+const { getConfig } = require('./utils/config');
 
 module.exports = run;
-if (require.main === module) {
-  main();
-}
 
-function main() {
-  const cliOptions = getOptionsFromCli(process.argv.slice(2));
-  run(cliOptions)
+if (require.main === module) {
+  const config = getConfig();
+
+  run(config)
     .catch((e) => {
-      console.error(cliOptions.debug ? e : e.message);
+      console.error(config.debugMode ? e : e.message);
       process.exit(1);
     });
 }
 
-async function run(options) {
-  let transport;
-
-  try {
-    options = normalizeOptions(options);
-    transport = options.transport.instance;
-    transport.init();
-  } catch (e) {
-    return Promise.reject(e);
+async function run(config) {
+  if (config.getErrors().length > 0) {
+    throw new Error(config.getErrors().join('.\n'));
   }
 
-  const Command = commands[options.command];
-  if (!Command) {
-    throw new Error(`Unknown command ${options.command}`);
-  }
+  const transport = await createTransport(config);
+  const command = createCommand(config, transport);
 
-  /** @type AbstractCommand */
-  const command = new Command(options);
   await command.run();
   await transport.close();
 }

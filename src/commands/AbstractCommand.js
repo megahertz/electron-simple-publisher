@@ -1,20 +1,30 @@
 'use strict';
 
 class AbstractCommand {
-  constructor(options) {
-    this.name = this.constructor.name
-      .replace('Command', '').toLowerCase();
+  /**
+   * @param {Config} config
+   * @param {AbstractTransport} transport
+   */
+  constructor(config, transport) {
+    /**
+     * @type {Config}
+     */
+    this.config = config;
 
+    /**
+     * @type {AbstractTransport}
+     */
+    this.transport = transport;
+
+    /**
+     * @type {string[]}
+     */
     this.results = [];
 
-    this.options = options;
-
-    if (!options.transport) {
-      return;
-    }
-
-    /** @type {AbstractTransport} */
-    this.transport = options.transport.instance;
+    /**
+     * @type {string}
+     */
+    this.name = this.constructor.name.replace('Command', '').toLowerCase();
   }
 
   async beforeAction() {

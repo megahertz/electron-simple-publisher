@@ -10,7 +10,7 @@ check its documentation for all transport options.
 {
   ...
   "updater": {
-    "url": "http://example.com/updates/updates.json"
+    "url": "http://example.com/updates/{platform}-{arch}-{channel}.json"
   },
   ...
 }

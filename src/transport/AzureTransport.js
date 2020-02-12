@@ -1,24 +1,23 @@
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
 const {
   BlobServiceClient,
   StorageSharedKeyCredential,
 } = require('@azure/storage-blob');
 
-const AbstractTransport = require('./abstract');
+const AbstractTransport = require('./AbstractTransport');
 
+/**
+ * @property {string} options.account REQUIRED
+ * @property {string} options.accountKey REQUIRED
+ * @property {string} options.containerName REQUIRED
+ * @property {string} options.blobUrl the base url
+ * @property {string} options.metaFileName
+ * @property {string} options.remoteUrl http accessible url
+ * @property {string} options.remotePath "prefix" inside the azure container
+ */
 class AzureTransport extends AbstractTransport {
-  /**
-   * @param {Object} options
-   * @param {string} options.account REQUIRED
-   * @param {string} options.accountKey REQUIRED
-   * @param {string} options.containerName REQUIRED
-   * @param {string} options.blobUrl the base url
-   * @param {string} options.remoteUrl http accessible url
-   * @param {string} options.remotePath "prefix" inside the azure container
-   */
   normalizeOptions(options) {
     if (!options.containerName) {
       throw new Error('Container name is required.');
@@ -44,7 +43,7 @@ class AzureTransport extends AbstractTransport {
     super.normalizeOptions(options);
   }
 
-  init() {
+  async init() {
     this.sharedKeyCredential = new StorageSharedKeyCredential(
       this.options.account,
       this.options.accountKey
@@ -66,11 +65,12 @@ class AzureTransport extends AbstractTransport {
    * Upload file to a hosting and get its url
    * @abstract
    * @param {string} filePath
-   * @param {object} build
+   * @param {Build} build
    * @return {Promise<string>} File url
    */
   async uploadFile(filePath, build) {
     const outPath = this.getOutFilePath(filePath, build);
+
     try {
       const blockBlobClient = this.containerClient.getBlockBlobClient(outPath);
       await blockBlobClient.uploadFile(filePath);
@@ -85,18 +85,24 @@ class AzureTransport extends AbstractTransport {
   }
 
   /**
-   * Save updates.json to a hosting
-   * @return {Promise<string>} Url to updates.json
+   * Save MetaFile to a hosting
+   * @param {object} data MetaFile content
+   * @param {Build} build
+   * @return {Promise<string>} Url to MetaFile
    */
-  async pushUpdatesJson(data) {
-    const outPath = path.join(this.options.remotePath, 'updates.json');
+  async pushMetaFile(data, build) {
+    const outPath = this.replaceBuildTemplates(
+      path.posix.join(this.options.remotePath, this.options.metaFileName),
+      build
+    );
+
     try {
       const blockBlobClient = this.containerClient.getBlockBlobClient(outPath);
-      const updatesJson = JSON.stringify(data, null, '  ');
-      await blockBlobClient.upload(updatesJson, Buffer.byteLength(updatesJson));
-      return;
+      const meta = JSON.stringify(data, null, '  ');
+      await blockBlobClient.upload(meta, Buffer.byteLength(meta));
+      return this.getMetaFileUrl(build);
     } catch (e) {
-      console.warn(`Couldn't upload updates.json: ${e.message}`);
+      console.warn(`Couldn't upload MetaFile: ${e.message}`);
       throw e;
     }
   }
@@ -128,32 +134,26 @@ class AzureTransport extends AbstractTransport {
   }
 
   /**
+   * Remove the resource (build id) from a hosting
+   * @abstract
+   * @param {string} resource
    * @return {Promise}
    */
-  async removeBuild(build, resolveName = true) {
+  async removeResource(resource) {
     try {
-      const buildId = resolveName ? this.getBuildId(build) : build;
-      const outPath = path.posix.join(this.options.remotePath, buildId);
+      const outPath = path.posix.join(this.options.remotePath, resource);
 
       for await (const blob of this.containerClient.listBlobsFlat({
         prefix: outPath,
       })) {
-        try {
-          const blockBlobClient = this.containerClient.getBlockBlobClient(
-            blob.name
-          );
-          await blockBlobClient.delete({
-            deleteSnapshots: 'include',
-          });
-        } catch (e) {
-          console.warn(`Couldn't remove file ${blob.name}: ${e.message}`);
-          throw e;
-        }
-      }
+        const blockBlobClient = this.containerClient.getBlockBlobClient(
+          blob.name
+        );
 
-      return Promise.resolve();
+        await blockBlobClient.delete({ deleteSnapshots: 'include' });
+      }
     } catch (e) {
-      console.warn(`Couldn't list builds: ${e.message}`);
+      console.warn(`Couldn't remove build: ${e.message}`);
       throw e;
     }
   }
@@ -162,7 +162,7 @@ class AzureTransport extends AbstractTransport {
     localFilePath = path.basename(localFilePath);
     return path.posix.join(
       this.options.remotePath,
-      this.getBuildId(build),
+      build.idWithVersion,
       this.normalizeFileName(localFilePath)
     );
   }

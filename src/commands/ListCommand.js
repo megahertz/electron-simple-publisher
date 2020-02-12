@@ -5,7 +5,7 @@ const AbstractCommand = require('./AbstractCommand');
 class ListCommand extends AbstractCommand {
   async action() {
     this.results = await this.transport.fetchBuildsList();
-    console.log(this.results);
+    console.info(this.results);
   }
 
   async run() {
@@ -13,7 +13,7 @@ class ListCommand extends AbstractCommand {
 
     if (this.results.length > 0) {
       console.error('Releases on the hosting:');
-      console.log(this.results.join('\n'));
+      console.info(this.results.join('\n'));
     } else {
       console.error('There are no releases on the hosting.');
     }

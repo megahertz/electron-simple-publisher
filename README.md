@@ -37,7 +37,7 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
   You can specify all option through command line arguments, but it's
   easier to store the config in publisher.js or publisher.json in the
   project root. Here is an example for publishing through SSH:
-  ```js
+  ```json
   {
     "transport": {
       "module": "ssh",
@@ -51,7 +51,7 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
       "readme": "The first version"
     },
     // If you've already set package.json:updater.url you can skip this option:
-    "updatesJsonUrl": "http://example.com/updates/update.json",
+    "metaFileUrl": "http://example.com/updates/update.json",
     // Builds contained these substrings will be ignored when run clean command
     "except": [
       "prod-v0.5.0"
@@ -74,10 +74,10 @@ Commands (default is publish):
   replace [configFile] [buildId]            Replace the current build.
   remove  [configFile] [buildId1 Id2 …]     Remove one or more builds.
   clean   [configFile]                      Remove builds missed in updates.json
-    -e or --except NAME1,NAME2              NAME1,NAME2 will be preserved
+    -e, --except NAME1,NAME2                NAME1,NAME2 will be preserved
   list    [configFile]                      Show builds on a hosting.
 
-BuildId has a following format: [platform]-[arch]-[channel]-v[version]
+BuildId has a following format: [platform]-[arch]-[channel]-[version]
   You can specify only a part of buildId, like linux-x64, defaults:
     platform: process.platform
     arch:     process.arch
@@ -85,14 +85,15 @@ BuildId has a following format: [platform]-[arch]-[channel]-v[version]
     version:  package.json:version
 
 Options:
-  configFile          File with json ext, defaults to ./publisher.js
-  -t or --transport   Name of node module which implements Transport interface.
-  --transport-{name}  Specify the {name} transport option
-  -p or --path        Path to distributive files (default dist).
-  -d or --debug       Show debug information
-  -n or --noprogress  Don't show upload progress
-  --field-{name}      Set updates.json:{buildId}.{name} field 
-  -h or --help        Show this message
+  configFile             File with json ext, defaults to ./publisher.js
+  -t, --transport        Selected transport
+      --transport.{name} Specify a transport option
+  -p, --path             Path to distributive files (default dist).
+  -d, --debug            Show debug information
+  -n, --noprogress       Don't show upload progress
+      --fields.{name}    Specify a field in the target updates.json file 
+      --help             Show this message
+      --version          Show publisher version
 ```
 
 ### Transports

@@ -2,7 +2,7 @@
 
 const { describe, expect, it } = require('humile');
 
-const SshTransport = require('../ssh');
+const SshTransport = require('../SshTransport');
 
 class NoExceptionSshTransport extends SshTransport {
   normalizeOptions(options) {
@@ -40,7 +40,7 @@ function getTransportOptions(config) {
 
   const ssh = new NoExceptionSshTransport({
     transport: options,
-    updatesJsonUrl: 'http://example.com',
+    metaFileUrl: 'http://example.com',
   });
 
   return ssh.options;

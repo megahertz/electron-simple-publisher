@@ -3,33 +3,37 @@
 const fs = require('fs');
 const path = require('path');
 const { stderr: lineLog } = require('single-line-log');
-const AbstractCommand = require('./AbstractCommand');
+const { AssetsInfo } = require('../utils/assets');
 const { calcSha256Hash } = require('../utils/file');
+const AbstractCommand = require('./AbstractCommand');
+const MetaModifier = require('./MetaModifier');
+
 
 class PublishCommand extends AbstractCommand {
   async beforeAction() {
-    this.publishedBuilds = [];
     this.onProgress = this.onProgress.bind(this);
+
+    this.metaModifier = new MetaModifier(
+      this.transport,
+      (metaJson, build, meta) => {
+        this.results.push(build.idWithVersion);
+        metaJson[build.id] = meta;
+        return metaJson;
+      }
+    );
+
     return this.transport.beforeUpload();
   }
 
   async action() {
-    for (const build of this.options.builds) {
+    const assetsInfo = new AssetsInfo(this.config);
+    for (const build of assetsInfo.getBuilds()) {
       await this.publish(build);
     }
   }
 
   async afterAction() {
-    const json = await this.transport.fetchUpdatesJson();
-
-    for (const [name, meta] of this.publishedBuilds) {
-      const buildId = this.transport.getBuildId(name, false);
-      this.results.push(this.transport.getBuildId(name));
-      json[buildId] = meta;
-    }
-
-    await this.transport.pushUpdatesJson(json);
-
+    await this.metaModifier.apply();
     await this.transport.afterUpload();
   }
 
@@ -42,8 +46,9 @@ class PublishCommand extends AbstractCommand {
       await this.publishOsxReleaseFile(build, assets);
     }
 
+
     const meta = {
-      ...this.options.fields,
+      ...this.config.fields,
       update:  assets.update,
       install: assets.install,
       version: build.version,
@@ -57,11 +62,11 @@ class PublishCommand extends AbstractCommand {
       meta.sha256 = await calcSha256Hash(build.assets.update);
     }
 
-    this.publishedBuilds.push([build, meta]);
+    this.metaModifier.addBuild(build, meta);
   }
 
   /**
-   * @param {object} build
+   * @param {Build} build
    * @return {Promise<object>} Assets urls
    */
   async publishAssets(build) {
@@ -70,7 +75,7 @@ class PublishCommand extends AbstractCommand {
     const uploaded = {};
 
     if (!Object.keys(assets).length) {
-      const buildId = this.transport.getBuildId(build);
+      const buildId = build.idWithVersion;
       throw new Error(
         `There are no assets for build ${buildId}. Check the dist folder.`
       );
@@ -80,9 +85,13 @@ class PublishCommand extends AbstractCommand {
       if (!assets.hasOwnProperty(name)) continue;
 
       const filePath = assets[name];
+      if (!filePath) {
+        continue;
+      }
+
       if (uploaded[filePath] === undefined) {
         uploaded[filePath] = await this.transport.uploadFile(filePath, build);
-        if (!this.options.noprogress) {
+        if (this.config.progress) {
           lineLog('');
         }
       }
@@ -96,12 +105,12 @@ class PublishCommand extends AbstractCommand {
   async publishOsxReleaseFile(build, meta) {
     const data = {
       url: meta.update,
-      name: this.options.fields.name || '',
-      notes: this.options.fields.notes || '',
+      name: this.config.fields.name || '',
+      notes: this.config.fields.notes || '',
       pub_date: new Date().toISOString(),
     };
 
-    const releaseFilePath = path.join(build.assetsPath, 'release.json');
+    const releaseFilePath = path.join(this.config.distPath, 'release.json');
     fs.writeFileSync(releaseFilePath, JSON.stringify(data, null, '  '));
 
     meta.update = await this.transport.uploadFile(releaseFilePath, build);
