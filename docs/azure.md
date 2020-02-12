@@ -2,7 +2,7 @@
 
 ## Configuration example:
 *package.json*
-```json
+```js
 {
   ...
   "updater": {

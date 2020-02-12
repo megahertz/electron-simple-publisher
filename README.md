@@ -37,7 +37,7 @@ Install with [npm](https://npmjs.org/package/electron-simple-publisher):
   You can specify all option through command line arguments, but it's
   easier to store the config in publisher.js or publisher.json in the
   project root. Here is an example for publishing through SSH:
-  ```json
+  ```js
   {
     "transport": {
       "module": "ssh",
