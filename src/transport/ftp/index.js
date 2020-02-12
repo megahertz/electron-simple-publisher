@@ -27,6 +27,8 @@ class FtpTransport extends AbstractTransport {
   }
 
   async init() {
+    super.init();
+
     this.ftp = new FtpClient(this.options);
     return this.ftp.connect();
   }

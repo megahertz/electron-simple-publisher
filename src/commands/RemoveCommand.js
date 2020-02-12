@@ -37,7 +37,7 @@ class RemoveCommand extends AbstractCommand {
   }
 
   async afterAction() {
-    await this.metaModifier.apply();
+    await this.metaModifier.updateMetaFile();
     await this.transport.afterRemove();
   }
 

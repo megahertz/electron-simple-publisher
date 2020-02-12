@@ -44,6 +44,8 @@ class AzureTransport extends AbstractTransport {
   }
 
   async init() {
+    super.init();
+
     this.sharedKeyCredential = new StorageSharedKeyCredential(
       this.options.account,
       this.options.accountKey
@@ -57,8 +59,6 @@ class AzureTransport extends AbstractTransport {
     this.containerClient = this.blobServiceClient.getContainerClient(
       this.options.containerName
     );
-
-    super.init();
   }
 
   /**

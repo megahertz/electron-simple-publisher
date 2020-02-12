@@ -129,10 +129,10 @@ class AssetsInfo {
   /**
    * @param {string} buildSpec
    * @return {Build}
-   * @package
    */
   createBuild(buildSpec) {
     const build = Build.normalize(buildSpec, {
+      platform: this.config.platform,
       arch: this.config.arch,
       channel: this.config.channel,
       version: this.config.version,

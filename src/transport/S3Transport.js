@@ -44,6 +44,8 @@ class S3Transport extends AbstractTransport {
   }
 
   async init() {
+    super.init();
+
     AWS.config.update(this.options.aws);
     //noinspection JSCheckFunctionSignatures
     this.s3 = new AWS.S3({ apiVersion: '2006-03-01' });

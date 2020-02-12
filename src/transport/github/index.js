@@ -50,7 +50,7 @@ class GithubTransport extends AbstractTransport {
     this.githubApi = new GithubApi(
       repo,
       options.token,
-      this.config.debug
+      this.config.debugMode
     );
   }
 
@@ -133,7 +133,7 @@ class GithubTransport extends AbstractTransport {
       _ref: `tags/${tag}`,
     });
     if (tagResp.code !== 204) {
-      throw new Error(`Tag ${tag} isn't removed`);
+      throw new Error(`Tag ${tag} isn't removed: ${tagResp.message}`);
     }
   }
 

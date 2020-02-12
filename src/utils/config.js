@@ -3,8 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const options = require('package-options');
-
-const COMMANDS = ['publish', 'replace', 'remove', 'clean', 'list'];
+const { commandsList } = require('../commands');
 
 function getConfig() {
   return new Config(getOptions());
@@ -30,6 +29,7 @@ Commands (default is publish):
   clean   [configFile]                      Remove builds missed in updates.json
     -e, --except NAME1,NAME2                NAME1,NAME2 will be preserved
   list    [configFile]                      Show builds on a hosting.
+  config                                    Just show the final config
 
 BuildId has a following format: [platform]-[arch]-[channel]-[version]
   You can specify only a part of buildId, like linux-x64, defaults:
@@ -61,7 +61,7 @@ class Config {
      * @type {'publish' | 'replace' | 'remove' | 'clean' | 'list'}
      */
     this.command = 'publish';
-    if (COMMANDS.includes(opts._[0])) {
+    if (commandsList[opts._[0]]) {
       this.command = opts._[0];
       opts._.shift();
     }
@@ -138,7 +138,7 @@ class Config {
     /**
      * @type {string}
      */
-    this.updatesJsonUrl = opts.updatesJsonUrl || '';
+    this.metaFileUrl = opts.metaFileUrl || '';
 
     /**
      * @type {string}
@@ -179,8 +179,8 @@ class Config {
       this.channel = updater.channel;
     }
 
-    if (updater.url && !this.updatesJsonUrl) {
-      this.updatesJsonUrl = updater.url;
+    if (updater.url && !this.metaFileUrl) {
+      this.metaFileUrl = updater.url;
     }
 
     if (updater.build) {

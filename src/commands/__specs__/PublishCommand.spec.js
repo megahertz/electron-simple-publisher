@@ -28,7 +28,7 @@ describe('Publish command', () => {
 
     const config = getTestConfig(options);
 
-    const transport = await createTransport(config);
+    const transport = createTransport(config);
     const cmd = new PublishCommand(config, transport);
 
     const assetUrls = await cmd.publishAssets(build);

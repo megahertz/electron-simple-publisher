@@ -27,13 +27,19 @@ class PublishCommand extends AbstractCommand {
 
   async action() {
     const assetsInfo = new AssetsInfo(this.config);
-    for (const build of assetsInfo.getBuilds()) {
+
+    const builds = assetsInfo.getBuilds();
+    if (builds.length < 1) {
+      builds.push(assetsInfo.createBuild(''));
+    }
+
+    for (const build of builds) {
       await this.publish(build);
     }
   }
 
   async afterAction() {
-    await this.metaModifier.apply();
+    await this.metaModifier.updateMetaFile();
     await this.transport.afterUpload();
   }
 

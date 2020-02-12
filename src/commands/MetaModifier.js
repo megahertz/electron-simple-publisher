@@ -19,7 +19,7 @@ class MetaModifier {
     this.builds.push({ build, additionalData });
   }
 
-  async apply() {
+  async updateMetaFile() {
     const buildsByUrl = this.groupBuildsByUrl();
 
     for (const url in buildsByUrl) {

@@ -18,7 +18,7 @@ module.exports = {
  * @param {Config} config
  * @return {Promise<AbstractTransport>}
  */
-async function createTransport(config) {
+function createTransport(config) {
   let transportModule = config.transport.module;
 
   if (TRANSPORTS[transportModule]) {
@@ -52,8 +52,5 @@ async function createTransport(config) {
   /**
    * @type {AbstractTransport}
    */
-  const instance = new Transport(config);
-  await instance.init();
-
-  return instance;
+  return new Transport(config);
 }

@@ -23,7 +23,7 @@ async function run(config) {
     throw new Error(config.getErrors().join('.\n'));
   }
 
-  const transport = await createTransport(config);
+  const transport = createTransport(config);
   const command = createCommand(config, transport);
 
   await command.run();

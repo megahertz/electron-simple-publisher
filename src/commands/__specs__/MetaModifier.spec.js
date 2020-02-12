@@ -15,7 +15,7 @@ describe('MetaModifier', () => {
         metaFileUrl: 'http://example.com/updates.json',
       },
     });
-    const transport = await createTransport(config);
+    const transport = createTransport(config);
     const modifier = new MetaModifier(transport, (meta, build) => {
       return { [build.id]: build };
     });
@@ -24,7 +24,7 @@ describe('MetaModifier', () => {
 
     modifier.addBuild(linuxBuild);
 
-    await modifier.apply();
+    await modifier.updateMetaFile();
 
     expect(transport.updatePushes).toEqual([{
       'linux-x64-prod': linuxBuild,
@@ -38,7 +38,7 @@ describe('MetaModifier', () => {
         metaFileUrl: 'http://example.com/{platform}.json',
       },
     });
-    const transport = await createTransport(config);
+    const transport = createTransport(config);
     const modifier = new MetaModifier(transport, (meta, build) => {
       meta[build.id] = build;
       return meta;
@@ -53,7 +53,7 @@ describe('MetaModifier', () => {
     modifier.addBuild(windows32Build);
     modifier.addBuild(windows64Build);
 
-    await modifier.apply();
+    await modifier.updateMetaFile();
 
     expect(transport.updatePushes).toEqual([
       {

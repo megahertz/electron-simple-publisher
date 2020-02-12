@@ -48,6 +48,8 @@ class SshTransport extends AbstractTransport {
   }
 
   async init() {
+    super.init();
+
     /**
      * @type {*}
      * @method execCommand
@@ -188,9 +190,9 @@ class SshTransport extends AbstractTransport {
     });
 
     if (log) {
-      console.log('Execute command: ' + command);
-      console.log(result.stdout);
-      console.log(result.stderr);
+      console.info('Execute command: ' + command);
+      console.info(result.stdout);
+      console.info(result.stderr);
     }
 
     return result;

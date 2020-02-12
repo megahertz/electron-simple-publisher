@@ -40,6 +40,8 @@ class AbstractCommand {
   }
 
   async run() {
+    await this.transport.init();
+
     await this.beforeAction();
     await this.action();
     await this.afterAction();
@@ -51,7 +53,7 @@ class AbstractCommand {
   showResult(list, verb) {
     if (list && list.length > 0) {
       console.error(`Successfully ${verb}:`);
-      console.log(list.join('\n'));
+      console.info(list.join('\n'));
     } else {
       console.error(`Nothing was ${verb}.`);
     }

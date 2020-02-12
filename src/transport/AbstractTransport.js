@@ -26,8 +26,6 @@ class AbstractTransport extends EventEmitter {
      */
     this.config = config;
     this.options = config.transport;
-
-    this.normalizeOptions(this.options);
   }
 
   normalizeOptions(options) {
@@ -60,7 +58,7 @@ class AbstractTransport extends EventEmitter {
    * @return {Promise}
    */
   async init() {
-    // nothing by default
+    this.normalizeOptions(this.options);
   }
 
   /**

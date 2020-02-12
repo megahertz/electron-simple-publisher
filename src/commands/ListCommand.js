@@ -5,10 +5,11 @@ const AbstractCommand = require('./AbstractCommand');
 class ListCommand extends AbstractCommand {
   async action() {
     this.results = await this.transport.fetchBuildsList();
-    console.info(this.results);
   }
 
   async run() {
+    await this.transport.init();
+
     await this.action();
 
     if (this.results.length > 0) {

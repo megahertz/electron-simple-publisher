@@ -5,11 +5,19 @@ const list    = require('./ListCommand');
 const publish = require('./PublishCommand');
 const remove  = require('./RemoveCommand');
 const replace = require('./ReplaceCommand');
+const showConfig = require('./ConfigCommand');
 
-const COMMANDS = { clean, list, publish, remove, replace };
+const commandsList = {
+  clean,
+  config: showConfig,
+  list,
+  publish,
+  remove,
+  replace,
+};
 
 module.exports = {
-  list: COMMANDS,
+  commandsList,
   createCommand,
 };
 
@@ -19,6 +27,6 @@ module.exports = {
  * @return {AbstractCommand}
  */
 function createCommand(config, transport) {
-  const Command = COMMANDS[config.command];
+  const Command = commandsList[config.command];
   return new Command(config, transport);
 }
