@@ -43,5 +43,7 @@ function getTransportOptions(config) {
     metaFileUrl: 'http://example.com',
   });
 
+  ssh.normalizeOptions(ssh.options);
+
   return ssh.options;
 }
