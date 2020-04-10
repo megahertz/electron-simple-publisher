@@ -90,7 +90,10 @@ class Config {
     /**
      * @type {string[]}
      */
-    this.except = (opts.except || '').split(',');
+    this.except = (opts.except || '');
+    if (typeof this.except === 'string') {
+      this.except = this.except.split(',');
+    }
 
     /**
      * @type boolean
