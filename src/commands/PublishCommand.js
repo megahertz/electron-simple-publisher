@@ -8,7 +8,6 @@ const { calcSha256Hash } = require('../utils/file');
 const AbstractCommand = require('./AbstractCommand');
 const MetaModifier = require('./MetaModifier');
 
-
 class PublishCommand extends AbstractCommand {
   async beforeAction() {
     this.onProgress = this.onProgress.bind(this);
@@ -51,7 +50,6 @@ class PublishCommand extends AbstractCommand {
     if (build.platform === 'darwin') {
       await this.publishOsxReleaseFile(build, assets);
     }
-
 
     const meta = {
       ...this.config.fields,

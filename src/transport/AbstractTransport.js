@@ -4,7 +4,6 @@ const { EventEmitter } = require('events');
 const http = require('httpreq');
 const path = require('path');
 
-
 const IGNORE_WARNING = 'You can ignore this warning if you run this command '
   + 'for the first time.';
 

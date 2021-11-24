@@ -34,7 +34,6 @@ class GithubTransport extends AbstractTransport {
       options.metaFilePath = options.metaFilePath.substring(1);
     }
 
-
     this.initApiClient();
   }
 

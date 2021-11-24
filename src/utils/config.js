@@ -236,7 +236,6 @@ module.exports = {
   getOptions,
 };
 
-
 function onUndefined(value, alternative) {
   if (value !== undefined) {
     return value;

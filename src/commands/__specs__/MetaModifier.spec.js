@@ -6,7 +6,6 @@ const Build = require('../../utils/Build');
 const { createTransport } = require('../../transport');
 const { getTestConfig } = require('../../utils/config');
 
-
 describe('MetaModifier', () => {
   it('should provide function which modifies json', async () => {
     const config = getTestConfig({
