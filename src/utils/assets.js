@@ -5,6 +5,15 @@ const path = require('path');
 const Build = require('./Build');
 
 const ASSETS_DATA = {
+  'darwin-arm64': {
+    install: [
+      '{productName}-{version}-arm64.dmg',
+    ],
+    metaFile: null,
+    update: [
+      '{productName}-{version}-arm64-mac.zip',
+    ],
+  },
   'darwin-x64': {
     install: [
       '{productName}-{version}.dmg',

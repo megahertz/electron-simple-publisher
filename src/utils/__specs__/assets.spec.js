@@ -20,8 +20,12 @@ describe('AssetsInfo', () => {
 
       const builds = info.getBuilds();
 
-      expect(builds.length).toBe(3);
-      expect(builds[0].platform).toBe('darwin');
+      expect(builds.map(b => b.toString())).toEqual([
+        'darwin-arm64-prod-0.0.1',
+        'darwin-x64-prod-0.0.1',
+        'linux-x64-prod-0.0.1',
+        'win32-x64-prod-0.0.1',
+      ]);
     });
 
     it('should find specified build', () => {
@@ -35,8 +39,9 @@ describe('AssetsInfo', () => {
 
       const builds = info.getBuilds();
 
-      expect(builds.length).toBe(1);
-      expect(builds[0].platform).toBe('linux');
+      expect(builds.map(b => b.toString())).toEqual([
+        'linux-x64-prod-0.0.1',
+      ]);
     });
   });
 });
